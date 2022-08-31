@@ -29,6 +29,9 @@ public class SlotEntry {
   @Enumerated(EnumType.STRING)
   private SlotEntryStatusType statusType;
 
+  @Enumerated(EnumType.STRING)
+  private SlotEntryMeetingType meetingType;
+
   public SlotEntry(Doctor doctor, Patient patient, LocalDateTime startTime, SlotEntryStatusType statusType) {
     this.doctor = doctor;
     this.patient = patient;
@@ -77,5 +80,13 @@ public class SlotEntry {
 
   public void setStatusType(SlotEntryStatusType statusType) {
     this.statusType = statusType;
+  }
+
+  public SlotEntryMeetingType getMeetingType() {
+    return meetingType;
+  }
+
+  public void setMeetingType(SlotEntryMeetingType meetingType) {
+    this.meetingType = meetingType;
   }
 }

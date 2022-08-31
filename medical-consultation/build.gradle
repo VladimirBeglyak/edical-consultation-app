@@ -32,23 +32,6 @@ dependencies {
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
-jar {
-
-  def jars = configurations.runtimeClasspath.files.collect {"lib/$it.name"}
-
-  manifest {
-    attributes 'Main-Class': 'com.itexpert.MedicalConsultationAppApplication',
-        'Class-Path': jars.join(' ')
-  }
-
-  task copyAllDependencies(type: Copy) {
-    from(configurations.runtimeClasspath.files)
-    into("$buildDir/libs/lib")
-  }
-}
-
-jar.dependsOn copyAllDependencies
-
 querydsl {
   jpa = true
   library = 'com.querydsl:querydsl-apt:5.0.0'
