@@ -1,0 +1,3 @@
+rootProject.name = 'medical-consultation-app'
+
+include 'medical-consultation'

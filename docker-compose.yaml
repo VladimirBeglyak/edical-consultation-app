@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    container_name: medical-consultation-db
+    environment:
+      POSTGRES_DB: hakaton-test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+
+  app:
+    build: ./
+    container_name: medical-consultation-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
