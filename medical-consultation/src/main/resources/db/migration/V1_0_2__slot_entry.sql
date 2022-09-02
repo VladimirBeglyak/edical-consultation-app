@@ -5,6 +5,6 @@ create table slot_entry
     status_type varchar(32),
     doctor_id   bigint,
     patient_id  bigint,
-    foreign key (doctor_id) references doctor (id),
-    foreign key (patient_id) references patient (id)
+    foreign key (doctor_id) references user_account (id),
+    foreign key (patient_id) references user_account (id)
 );

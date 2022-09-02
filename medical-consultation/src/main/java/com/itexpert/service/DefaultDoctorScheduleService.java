@@ -6,8 +6,8 @@ import com.itexpert.domain.Doctor;
 import com.itexpert.domain.DoctorSchedule;
 import com.itexpert.dto.ScheduleFilter;
 import com.itexpert.querydsl.QPredicates;
-import com.itexpert.repository.DoctorRepository;
 import com.itexpert.repository.DoctorScheduleRepository;
+import com.itexpert.repository.DoctorUserAccountRepository;
 import com.querydsl.core.types.Predicate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -21,12 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class DefaultDoctorScheduleService implements ScheduleService<DoctorSchedule> {
 
   private final DoctorScheduleRepository doctorScheduleRepository;
-  private final DoctorRepository doctorRepository;
+  private final DoctorUserAccountRepository doctorUserAccountRepository;
 
   public DefaultDoctorScheduleService(DoctorScheduleRepository doctorScheduleRepository,
-      DoctorRepository doctorRepository) {
+      DoctorUserAccountRepository doctorUserAccountRepository) {
     this.doctorScheduleRepository = doctorScheduleRepository;
-    this.doctorRepository = doctorRepository;
+    this.doctorUserAccountRepository = doctorUserAccountRepository;
   }
 
   @Override
@@ -37,7 +37,7 @@ public class DefaultDoctorScheduleService implements ScheduleService<DoctorSched
 
   @Override
   public DoctorSchedule create(DoctorSchedule doctorSchedule, Long id) {
-    Optional<Doctor> doctor = doctorRepository.findById(id);
+    Optional<Doctor> doctor = doctorUserAccountRepository.findById(id);
     if (doctor.isPresent()) {
       doctorSchedule.setDoctor(doctor.get());
       doctorSchedule.setCreateAt(LocalDateTime.now());
@@ -48,14 +48,15 @@ public class DefaultDoctorScheduleService implements ScheduleService<DoctorSched
 
   @Override
   public void delete(Long id) {
-    doctorScheduleRepository.deleteById(id);
+
   }
 
   @Override
   public Page<DoctorSchedule> getAll(ScheduleFilter filter, Pageable pageable) {
     Predicate predicate = QPredicates.builder()
-        .add(filter.email(), doctorSchedule.doctor.personalData.name::containsIgnoreCase)
-        .add(filter.firstName(), doctorSchedule.doctor.personalData.name::containsIgnoreCase)
+        .add(filter.email(), doctorSchedule.doctor.email::containsIgnoreCase)
+        .add(filter.firstName(), doctorSchedule.doctor.firstName::containsIgnoreCase)
+        .add(filter.lastName(), doctorSchedule.doctor.lastName::containsIgnoreCase)
         .build();
     return doctorScheduleRepository.findAll(predicate, pageable);
   }

@@ -1,8 +1,6 @@
 package com.itexpert.controller;
 
-import com.itexpert.domain.UserAccount;
-import com.itexpert.dto.PageResponse;
-import com.itexpert.dto.UserFilter;
+import com.itexpert.domain.Doctor;
 import com.itexpert.service.UserAccountService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,29 +13,29 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("user-account")
+@RequestMapping("user-account/doctor")
 @RestController
-public class UserAccountController {
+public class DoctorUserAccountController {
 
-  private final UserAccountService<UserAccount> userAccountService;
+  private final UserAccountService<Doctor> userAccountService;
 
-  public UserAccountController(UserAccountService<UserAccount> userAccountService) {
+  public DoctorUserAccountController(UserAccountService<Doctor> userAccountService) {
     this.userAccountService = userAccountService;
   }
 
   @GetMapping("{id}")
-  public UserAccount get(@PathVariable Long id) {
+  public Doctor get(@PathVariable Long id) {
     return userAccountService.get(id);
   }
 
   @PostMapping
-  public UserAccount create(@RequestBody UserAccount userAccount) {
-    return userAccountService.create(userAccount);
+  public Doctor create(@RequestBody Doctor doctor) {
+    return userAccountService.create(doctor);
   }
 
   @PutMapping("{id}")
-  public UserAccount update(@PathVariable Long id, @RequestBody UserAccount userAccount) {
-    return userAccountService.update(userAccount, id);
+  public Doctor update(@PathVariable Long id, @RequestBody Doctor doctor) {
+    return userAccountService.update(doctor, id);
   }
 
   @DeleteMapping("{id}")
@@ -45,14 +43,8 @@ public class UserAccountController {
     userAccountService.delete(id);
   }
 
-  @GetMapping("/filter")
-  public PageResponse<UserAccount> getAllByFilter(UserFilter filter, Pageable pageable) {
-    Page<UserAccount> page = userAccountService.getAll(filter, pageable);
-    return PageResponse.of(page);
-  }
-
   @GetMapping
-  public Page<UserAccount> getAll(Pageable pageable) {
+  public Page<Doctor> getAll(Pageable pageable) {
     return userAccountService.getAll(pageable);
   }
 }

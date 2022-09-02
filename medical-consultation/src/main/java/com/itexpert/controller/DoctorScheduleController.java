@@ -52,7 +52,7 @@ public class DoctorScheduleController {
   }
 
   @GetMapping
-  public PageResponse<DoctorSchedule> getAll(Pageable pageable) {
-    return PageResponse.of(doctorScheduleService.getAll(pageable));
+  public Page<DoctorSchedule> getAll(Pageable pageable) {
+    return doctorScheduleService.getAll(pageable);
   }
 }

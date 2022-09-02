@@ -5,19 +5,24 @@ import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 
 @Entity
 public class SlotEntry {
 
   @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @GeneratedValue
   private Long id;
 
-  private Long doctorId;
+  @OneToOne
+  @JoinColumn(name = "doctor_id")
+  private Doctor doctor;
 
-  private Long patientId;
+  @OneToOne
+  @JoinColumn(name = "patient_id")
+  private Patient patient;
 
   private LocalDateTime startTime;
 
@@ -27,32 +32,14 @@ public class SlotEntry {
   @Enumerated(EnumType.STRING)
   private SlotEntryMeetingType meetingType;
 
-  public SlotEntry(Long doctorId, Long patientId, LocalDateTime startTime, SlotEntryStatusType statusType,
-      SlotEntryMeetingType meetingType) {
-    this.doctorId = doctorId;
-    this.patientId = patientId;
+  public SlotEntry(Doctor doctor, Patient patient, LocalDateTime startTime, SlotEntryStatusType statusType) {
+    this.doctor = doctor;
+    this.patient = patient;
     this.startTime = startTime;
     this.statusType = statusType;
-    this.meetingType = meetingType;
   }
 
   public SlotEntry() {
-  }
-
-  public Long getDoctorId() {
-    return doctorId;
-  }
-
-  public void setDoctorId(Long doctorId) {
-    this.doctorId = doctorId;
-  }
-
-  public Long getPatientId() {
-    return patientId;
-  }
-
-  public void setPatientId(Long patientId) {
-    this.patientId = patientId;
   }
 
   public Long getId() {
@@ -61,6 +48,22 @@ public class SlotEntry {
 
   public void setId(Long id) {
     this.id = id;
+  }
+
+  public Doctor getDoctor() {
+    return doctor;
+  }
+
+  public void setDoctor(Doctor doctor) {
+    this.doctor = doctor;
+  }
+
+  public Patient getPatient() {
+    return patient;
+  }
+
+  public void setPatient(Patient patient) {
+    this.patient = patient;
   }
 
   public LocalDateTime getStartTime() {

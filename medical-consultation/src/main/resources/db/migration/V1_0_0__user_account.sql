@@ -6,45 +6,33 @@ create sequence hibernate_sequence
 
 create table user_account
 (
-    id       bigserial primary key,
-    role     varchar(64) not null,
-    email    varchar     not null,
-    password varchar     not null
+    id         bigserial primary key,
+    first_name varchar not null,
+    last_name  varchar not null,
+    email      varchar not null,
+    password   varchar not null,
+    role       varchar not null
 );
 
-create table personal_data
+create table phone
 (
     id              bigserial primary key,
-    name            varchar not null,
-    phone           varchar not null,
-    image           varchar,
-    passport        varchar,
-    birth_date       date,
-    user_account_id bigint unique not null references user_account (id)
+    number          varchar not null,
+    user_account_id bigint,
+    foreign key (user_account_id) references user_account (id)
 );
-
-insert into user_account (email, password, role)
-values ('admin@gmail.com',
-        '{bcrypt}$2a$12$DI0qPSqi8PUhGzvOUTa/6.ZU75LbYmZubv1ZmlrIopeKATnr9/xFO',
-        'ADMIN');
 
 create table doctor
 (
     id              bigserial primary key,
-    document        varchar       not null,
-    specialty      varchar       not null,
-    user_account_id bigint unique not null references user_account (id),
-    personal_data_id bigint unique not null references personal_data (id)
+    position        varchar,
+    user_account_id bigint,
+    foreign key (user_account_id) references user_account (id)
 );
 
 create table patient
 (
     id              bigserial primary key,
-    user_account_id bigint unique not null references user_account (id),
-    personal_data_id bigint unique not null references personal_data (id)
+    user_account_id bigint,
+    foreign key (user_account_id) references user_account (id)
 );
-
-insert into personal_data(name, phone, image, user_account_id)
-values ('Ivan Ivanov', '+375336790382',
-        'https://cdn.vectorstock.com/i/1000x1000/18/05/businessman-or-programmer-avatar-profile-userpic-vector-7471805.webp',
-        1);

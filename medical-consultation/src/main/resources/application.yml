@@ -1,7 +1,7 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5433/hakaton-test
-#    url: jdbc:postgresql://db:5432/hakaton-test
+    #    url: jdbc:postgresql://localhost:5433/hakaton-test
+    url: jdbc:postgresql://db:5432/hakaton-test
     driver-class-name: org.postgresql.Driver
     username: postgres
     password: postgres
@@ -10,13 +10,11 @@ spring:
       hibernate:
         format_sql: true
         show_sql: true
-        hbm2ddl:
-          auto: update
+  #        hbm2ddl:
+  #          auto: update
   flyway:
     user: postgres
     password: postgres
     default-schema: public
-#    url: jdbc:postgresql://db:5432/hakaton-test
-    url: jdbc:postgresql://localhost:5433/hakaton-test
-frontend:
-  url: http://testtms.s3-website-us-east-1.amazonaws.com
+    url: jdbc:postgresql://db:5432/hakaton-test
+#    url: jdbc:postgresql://localhost:5433/hakaton-test

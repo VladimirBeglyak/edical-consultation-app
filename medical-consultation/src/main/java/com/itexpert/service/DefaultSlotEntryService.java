@@ -1,14 +1,15 @@
 package com.itexpert.service;
 
-import static com.itexpert.domain.Role.DOCTOR;
-import static com.itexpert.domain.Role.PATIENT;
+import static com.itexpert.domain.QSlotEntry.slotEntry;
 
+import com.itexpert.domain.Doctor;
+import com.itexpert.domain.Patient;
 import com.itexpert.domain.SlotEntry;
-import com.itexpert.domain.UserAccount;
 import com.itexpert.dto.SlotEntryFilter;
 import com.itexpert.querydsl.QPredicates;
+import com.itexpert.repository.DoctorUserAccountRepository;
+import com.itexpert.repository.PatientUserAccountRepository;
 import com.itexpert.repository.SlotEntryRepository;
-import com.itexpert.repository.UserAccountRepository;
 import com.querydsl.core.types.Predicate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -22,11 +23,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class DefaultSlotEntryService implements SlotEntryService {
 
   private final SlotEntryRepository slotEntryRepository;
-  private final UserAccountRepository userAccountRepository;
+  private final DoctorUserAccountRepository doctorUserAccountRepository;
+  private final PatientUserAccountRepository patientUserAccountRepository;
 
-  public DefaultSlotEntryService(SlotEntryRepository slotEntryRepository, UserAccountRepository userAccountRepository) {
+  public DefaultSlotEntryService(SlotEntryRepository slotEntryRepository,
+      DoctorUserAccountRepository doctorUserAccountRepository,
+      PatientUserAccountRepository patientUserAccountRepository) {
     this.slotEntryRepository = slotEntryRepository;
-    this.userAccountRepository = userAccountRepository;
+    this.doctorUserAccountRepository = doctorUserAccountRepository;
+    this.patientUserAccountRepository = patientUserAccountRepository;
   }
 
   @Override
@@ -37,8 +42,8 @@ public class DefaultSlotEntryService implements SlotEntryService {
 
   @Override
   public SlotEntry create(SlotEntry slotEntry) {
-    Optional<UserAccount> patient = userAccountRepository.findByIdAndRole(slotEntry.getPatientId(), PATIENT);
-    Optional<UserAccount> doctor = userAccountRepository.findByIdAndRole(slotEntry.getDoctorId(), DOCTOR);
+    Optional<Patient> patient = patientUserAccountRepository.findById(slotEntry.getPatient().getId());
+    Optional<Doctor> doctor = doctorUserAccountRepository.findById(slotEntry.getDoctor().getId());
     if (patient.isPresent() && doctor.isPresent()) {
       slotEntry.setStartTime(LocalDateTime.now());
       return slotEntryRepository.save(slotEntry);
@@ -54,9 +59,9 @@ public class DefaultSlotEntryService implements SlotEntryService {
   @Override
   public Page<SlotEntry> getAll(SlotEntryFilter filter, Pageable pageable) {
     Predicate predicate = QPredicates.builder()
-//        .add(filter.email(), slotEntry.doctorId::containsIgnoreCase)
-//        .add(filter.firstName(), slotEntry.patientId::containsIgnoreCase)
-//        .add(filter.lastName(), slotEntry.patient.email::containsIgnoreCase)
+        .add(filter.email(), slotEntry.patient.email::containsIgnoreCase)
+        .add(filter.firstName(), slotEntry.patient.email::containsIgnoreCase)
+        .add(filter.lastName(), slotEntry.patient.email::containsIgnoreCase)
         .build();
     return slotEntryRepository.findAll(predicate, pageable);
   }

@@ -1,6 +1,6 @@
 package com.itexpert.domain;
 
-public enum Specialty {
+public enum Position {
   PAEDIATRIC,
   ONCOLOGIST,
   DENTIST

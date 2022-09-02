@@ -4,6 +4,8 @@ import com.itexpert.domain.PatientSchedule;
 import com.itexpert.dto.PageResponse;
 import com.itexpert.dto.ScheduleFilter;
 import com.itexpert.service.ScheduleService;
+import java.time.LocalDateTime;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,11 +48,12 @@ public class PatientScheduleController {
 
   @GetMapping("/filter")
   public PageResponse<PatientSchedule> getAllByFilter(ScheduleFilter filter, Pageable pageable) {
-    return PageResponse.of(patientScheduleService.getAll(filter, pageable));
+    Page<PatientSchedule> page = patientScheduleService.getAll(filter, pageable);
+    return PageResponse.of(page);
   }
 
   @GetMapping
-  public PageResponse<PatientSchedule> getAll(Pageable pageable) {
-    return PageResponse.of(patientScheduleService.getAll(pageable));
+  public Page<PatientSchedule> getAll(Pageable pageable) {
+    return patientScheduleService.getAll(pageable);
   }
 }
