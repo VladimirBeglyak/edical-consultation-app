@@ -6,8 +6,8 @@ import com.itexpert.domain.Patient;
 import com.itexpert.domain.PatientSchedule;
 import com.itexpert.dto.ScheduleFilter;
 import com.itexpert.querydsl.QPredicates;
+import com.itexpert.repository.PatientRepository;
 import com.itexpert.repository.PatientScheduleRepository;
-import com.itexpert.repository.PatientUserAccountRepository;
 import com.querydsl.core.types.Predicate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -21,12 +21,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class DefaultPatientScheduleService implements ScheduleService<PatientSchedule> {
 
   private final PatientScheduleRepository patientScheduleRepository;
-  private final PatientUserAccountRepository patientUserAccountRepository;
+  private final PatientRepository patientRepository;
 
   public DefaultPatientScheduleService(PatientScheduleRepository patientScheduleRepository,
-      PatientUserAccountRepository patientUserAccountRepository) {
+      PatientRepository patientRepository) {
     this.patientScheduleRepository = patientScheduleRepository;
-    this.patientUserAccountRepository = patientUserAccountRepository;
+    this.patientRepository = patientRepository;
   }
 
   @Override
@@ -37,7 +37,7 @@ public class DefaultPatientScheduleService implements ScheduleService<PatientSch
 
   @Override
   public PatientSchedule create(PatientSchedule patientSchedule, Long id) {
-    Optional<Patient> patient = patientUserAccountRepository.findById(id);
+    Optional<Patient> patient = patientRepository.findById(id);
     if (patient.isPresent()) {
       patientSchedule.setPatient(patient.get());
       patientSchedule.setCreateAt(LocalDateTime.now());
@@ -54,9 +54,8 @@ public class DefaultPatientScheduleService implements ScheduleService<PatientSch
   @Override
   public Page<PatientSchedule> getAll(ScheduleFilter filter, Pageable pageable) {
     Predicate predicate = QPredicates.builder()
-        .add(filter.email(), patientSchedule.patient.email::containsIgnoreCase)
-        .add(filter.firstName(), patientSchedule.patient.firstName::containsIgnoreCase)
-        .add(filter.lastName(), patientSchedule.patient.lastName::containsIgnoreCase)
+        .add(filter.email(), patientSchedule.patient.userAccount.email::containsIgnoreCase)
+        .add(filter.firstName(), patientSchedule.patient.personalData.name::containsIgnoreCase)
         .build();
     return patientScheduleRepository.findAll(predicate, pageable);
   }

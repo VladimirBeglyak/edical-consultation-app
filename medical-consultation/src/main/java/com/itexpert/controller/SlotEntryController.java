@@ -52,7 +52,7 @@ public class SlotEntryController {
   }
 
   @GetMapping
-  public Page<SlotEntry> getAll(Pageable pageable) {
-    return slotEntryService.getAll(pageable);
+  public PageResponse<SlotEntry> getAll(Pageable pageable) {
+    return PageResponse.of(slotEntryService.getAll(pageable));
   }
 }

@@ -13,8 +13,8 @@ public class PageResponse<T> {
     this.metaData = metaData;
   }
 
-  public static <T> PageResponse<T> of(Page<T> page){
-    MetaData data = new MetaData(page.getNumber(), page.getSize(), page.getTotalElements());
+  public static <T> PageResponse<T> of(Page<T> page) {
+    MetaData data = new MetaData(page.getNumber(), page.getSize(), page.getTotalPages(), page.getTotalElements());
     return new PageResponse<>(page.getContent(), data);
   }
 
@@ -30,11 +30,13 @@ public class PageResponse<T> {
 
     int page;
     int size;
+    int totalPages;
     long totalElements;
 
-    public MetaData(int page, int size, long totalElements) {
+    public MetaData(int page, int size, int totalPages, long totalElements) {
       this.page = page;
       this.size = size;
+      this.totalPages = totalPages;
       this.totalElements = totalElements;
     }
 
@@ -48,6 +50,10 @@ public class PageResponse<T> {
 
     public long getTotalElements() {
       return totalElements;
+    }
+
+    public int getTotalPages() {
+      return totalPages;
     }
   }
 }
