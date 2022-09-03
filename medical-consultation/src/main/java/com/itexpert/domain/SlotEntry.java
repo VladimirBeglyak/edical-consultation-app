@@ -32,11 +32,13 @@ public class SlotEntry {
   @Enumerated(EnumType.STRING)
   private SlotEntryMeetingType meetingType;
 
-  public SlotEntry(Doctor doctor, Patient patient, LocalDateTime startTime, SlotEntryStatusType statusType) {
+  public SlotEntry(Doctor doctor, Patient patient, LocalDateTime startTime, SlotEntryStatusType statusType,
+      SlotEntryMeetingType meetingType) {
     this.doctor = doctor;
     this.patient = patient;
     this.startTime = startTime;
     this.statusType = statusType;
+    this.meetingType = meetingType;
   }
 
   public SlotEntry() {

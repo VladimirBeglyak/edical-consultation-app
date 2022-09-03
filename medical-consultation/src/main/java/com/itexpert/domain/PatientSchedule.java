@@ -1,23 +1,19 @@
 package com.itexpert.domain;
 
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 
 @Entity
-public class PatientSchedule extends BaseSchedule {
+public class PatientSchedule extends Schedule {
 
-  @OneToOne
-  @JoinColumn(name = "patient_id")
-  private Patient patient;
   private String description;
 
-  public Patient getPatient() {
-    return patient;
+  public PatientSchedule(UserAccount userAccount, LocalDateTime createAt, String description) {
+    super(userAccount, createAt);
+    this.description = description;
   }
 
-  public void setPatient(Patient patient) {
-    this.patient = patient;
+  public PatientSchedule() {
   }
 
   public String getDescription() {

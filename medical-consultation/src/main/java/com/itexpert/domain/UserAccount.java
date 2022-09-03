@@ -1,40 +1,44 @@
 package com.itexpert.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-public class UserAccount {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "type")
+public class UserAccount implements BaseEntity<Long> {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-
-  private String firstName;
-  private String lastName;
-
-  @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-  @JoinColumn(name = "user_account_id")
-  private List<Phone> phones = new ArrayList<>();
-
+  @Embedded
+  private PersonalData personalData;
   @Enumerated(EnumType.STRING)
   private Role role;
-
   private String email;
   private String password;
+
+  public UserAccount(Role role, String email, String password) {
+    this.role = role;
+    this.email = email;
+    this.password = password;
+  }
+
+  public UserAccount(Long id, Role role) {
+    this.id = id;
+    this.role = role;
+  }
+
+  public UserAccount() {
+  }
 
   public Long getId() {
     return id;
@@ -44,28 +48,12 @@ public class UserAccount {
     this.id = id;
   }
 
-  public String getFirstName() {
-    return firstName;
+  public PersonalData getPersonalData() {
+    return personalData;
   }
 
-  public void setFirstName(String firstName) {
-    this.firstName = firstName;
-  }
-
-  public String getLastName() {
-    return lastName;
-  }
-
-  public void setLastName(String lastName) {
-    this.lastName = lastName;
-  }
-
-  public List<Phone> getPhones() {
-    return phones;
-  }
-
-  public void setPhones(List<Phone> phones) {
-    this.phones = phones;
+  public void setPersonalData(PersonalData personalData) {
+    this.personalData = personalData;
   }
 
   public Role getRole() {

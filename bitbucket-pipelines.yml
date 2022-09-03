@@ -1,0 +1,9 @@
+#  Template Java Gradle build
+image: atlassian/default-image:2
+
+pipelines:
+  default:
+    - step:
+        script:
+          - ssh ubuntu@ec2-34-207-89-248.compute-1.amazonaws.com bash test.sh 
+

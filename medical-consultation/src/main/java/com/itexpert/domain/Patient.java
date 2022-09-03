@@ -1,10 +1,14 @@
 package com.itexpert.domain;
 
 import javax.persistence.Entity;
-import javax.persistence.PrimaryKeyJoinColumn;
 
-@PrimaryKeyJoinColumn(name = "user_account_id")
 @Entity
-public class Patient extends UserAccount{
+public class Patient extends UserAccount {
 
+  public Patient() {
+  }
+
+  public Patient(Role role, String email, String password) {
+    super(role, email, password);
+  }
 }

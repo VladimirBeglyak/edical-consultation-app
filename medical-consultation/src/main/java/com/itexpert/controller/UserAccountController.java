@@ -1,7 +1,7 @@
 package com.itexpert.controller;
 
-import com.itexpert.domain.UserAccount;
 import com.itexpert.dto.PageResponse;
+import com.itexpert.dto.UserAccountDto;
 import com.itexpert.dto.UserFilter;
 import com.itexpert.service.UserAccountService;
 import org.springframework.data.domain.Page;
@@ -19,25 +19,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserAccountController {
 
-  private final UserAccountService<UserAccount> userAccountService;
+  private final UserAccountService userAccountService;
 
-  public UserAccountController(UserAccountService<UserAccount> userAccountService) {
+  public UserAccountController(UserAccountService userAccountService) {
     this.userAccountService = userAccountService;
   }
 
   @GetMapping("{id}")
-  public UserAccount get(@PathVariable Long id) {
+  public UserAccountDto get(@PathVariable Long id) {
     return userAccountService.get(id);
   }
 
   @PostMapping
-  public UserAccount create(@RequestBody UserAccount userAccount) {
-    return userAccountService.create(userAccount);
+  public UserAccountDto create(@RequestBody UserAccountDto userAccountDto) {
+    return userAccountService.create(userAccountDto);
   }
 
   @PutMapping("{id}")
-  public UserAccount update(@PathVariable Long id, @RequestBody UserAccount userAccount) {
-    return userAccountService.update(userAccount, id);
+  public UserAccountDto update(@PathVariable Long id, @RequestBody UserAccountDto userAccountDto) {
+    return userAccountService.update(userAccountDto, id);
   }
 
   @DeleteMapping("{id}")
@@ -46,13 +46,12 @@ public class UserAccountController {
   }
 
   @GetMapping("/filter")
-  public PageResponse<UserAccount> getAllByFilter(UserFilter filter, Pageable pageable) {
-    Page<UserAccount> page = userAccountService.getAll(filter, pageable);
-    return PageResponse.of(page);
+  public PageResponse<UserAccountDto> getAllByFilter(UserFilter filter, Pageable pageable) {
+    return PageResponse.of(userAccountService.getAll(filter, pageable));
   }
 
   @GetMapping
-  public Page<UserAccount> getAll(Pageable pageable) {
+  public Page<UserAccountDto> getAll(Pageable pageable) {
     return userAccountService.getAll(pageable);
   }
 }

@@ -5,13 +5,14 @@ import static com.itexpert.domain.QSlotEntry.slotEntry;
 import com.itexpert.domain.Doctor;
 import com.itexpert.domain.Patient;
 import com.itexpert.domain.SlotEntry;
+import com.itexpert.dto.SlotEntryDto;
 import com.itexpert.dto.SlotEntryFilter;
+import com.itexpert.mapper.SlotEntryMapper;
 import com.itexpert.querydsl.QPredicates;
-import com.itexpert.repository.DoctorUserAccountRepository;
-import com.itexpert.repository.PatientUserAccountRepository;
+import com.itexpert.repository.DoctorRepository;
+import com.itexpert.repository.PatientRepository;
 import com.itexpert.repository.SlotEntryRepository;
 import com.querydsl.core.types.Predicate;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,56 +24,69 @@ import org.springframework.transaction.annotation.Transactional;
 public class DefaultSlotEntryService implements SlotEntryService {
 
   private final SlotEntryRepository slotEntryRepository;
-  private final DoctorUserAccountRepository doctorUserAccountRepository;
-  private final PatientUserAccountRepository patientUserAccountRepository;
+  private final DoctorRepository doctorRepository;
+  private final PatientRepository patientRepository;
+  private final SlotEntryMapper slotEntryMapper;
 
-  public DefaultSlotEntryService(SlotEntryRepository slotEntryRepository,
-      DoctorUserAccountRepository doctorUserAccountRepository,
-      PatientUserAccountRepository patientUserAccountRepository) {
+  public DefaultSlotEntryService(SlotEntryRepository slotEntryRepository, DoctorRepository doctorRepository,
+      PatientRepository patientRepository, SlotEntryMapper slotEntryMapper) {
     this.slotEntryRepository = slotEntryRepository;
-    this.doctorUserAccountRepository = doctorUserAccountRepository;
-    this.patientUserAccountRepository = patientUserAccountRepository;
+    this.doctorRepository = doctorRepository;
+    this.patientRepository = patientRepository;
+    this.slotEntryMapper = slotEntryMapper;
   }
 
   @Override
-  public SlotEntry get(Long id) {
+  public SlotEntryDto get(Long id) {
     return slotEntryRepository.findById(id)
-        .orElseGet(SlotEntry::new);
+        .map(slotEntryMapper::toDto)
+        .orElseThrow(() -> new IllegalStateException(String.format("SlotEntry with id %s doesn't exist", id)));
   }
 
   @Override
-  public SlotEntry create(SlotEntry slotEntry) {
-    Optional<Patient> patient = patientUserAccountRepository.findById(slotEntry.getPatient().getId());
-    Optional<Doctor> doctor = doctorUserAccountRepository.findById(slotEntry.getDoctor().getId());
+  public SlotEntryDto create(SlotEntryDto slotEntryDto) {
+    Optional<Patient> patient = patientRepository.findById(slotEntryDto.patientId());
+    Optional<Doctor> doctor = doctorRepository.findById(slotEntryDto.doctorId());
     if (patient.isPresent() && doctor.isPresent()) {
-      slotEntry.setStartTime(LocalDateTime.now());
-      return slotEntryRepository.save(slotEntry);
+      SlotEntry slotEntry = slotEntryMapper.toEntity(slotEntryDto);
+      return slotEntryMapper.toDto(slotEntryRepository.save(slotEntry));
+    } else {
+      throw new IllegalStateException(
+          String.format("SlotEntry already exists or patient with id %s and doctor with id %s doesn't exist",
+              slotEntryDto.patientId(), slotEntryDto.doctorId()));
     }
-    return null;
   }
 
   @Override
   public void delete(Long id) {
-
+    slotEntryRepository.findById(id)
+        .ifPresent(slotEntryRepository::delete);
   }
 
   @Override
-  public Page<SlotEntry> getAll(SlotEntryFilter filter, Pageable pageable) {
+  public Page<SlotEntryDto> getAll(SlotEntryFilter filter, Pageable pageable) {
     Predicate predicate = QPredicates.builder()
         .add(filter.email(), slotEntry.patient.email::containsIgnoreCase)
-        .add(filter.firstName(), slotEntry.patient.email::containsIgnoreCase)
-        .add(filter.lastName(), slotEntry.patient.email::containsIgnoreCase)
+        .add(filter.firstName(), slotEntry.doctor.email::containsIgnoreCase)
         .build();
-    return slotEntryRepository.findAll(predicate, pageable);
+    return slotEntryRepository.findAll(predicate, pageable)
+        .map(slotEntryMapper::toDto);
   }
 
   @Override
-  public Page<SlotEntry> getAll(Pageable pageable) {
-    return slotEntryRepository.findAll(pageable);
+  public Page<SlotEntryDto> getAll(Pageable pageable) {
+    return slotEntryRepository.findAll(pageable)
+        .map(slotEntryMapper::toDto);
   }
 
   @Override
-  public SlotEntry update(SlotEntry userAccount, Long id) {
-    return null;
+  public SlotEntryDto update(SlotEntryDto slotEntryDto, Long id) {
+    return slotEntryRepository.findById(id)
+        .map(foundedSlotEntry -> {
+          SlotEntry slotEntry = slotEntryMapper.toEntity(slotEntryDto);
+          return slotEntryRepository.saveAndFlush(slotEntry);
+        })
+        .map(slotEntryMapper::toDto)
+        .orElseThrow(() -> new IllegalStateException(String.format("SlotEntryMapper with id %s doesn't exist", id)));
   }
 }

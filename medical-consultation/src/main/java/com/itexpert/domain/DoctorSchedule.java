@@ -1,21 +1,15 @@
 package com.itexpert.domain;
 
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 
 @Entity
-public class DoctorSchedule extends BaseSchedule {
+public class DoctorSchedule extends Schedule {
 
-  @OneToOne
-  @JoinColumn(name = "doctor_id")
-  private Doctor doctor;
-
-  public Doctor getDoctor() {
-    return doctor;
+  public DoctorSchedule(UserAccount userAccount, LocalDateTime createAt) {
+    super(userAccount, createAt);
   }
 
-  public void setDoctor(Doctor doctor) {
-    this.doctor = doctor;
+  public DoctorSchedule() {
   }
 }
